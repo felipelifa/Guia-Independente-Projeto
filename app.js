@@ -14,6 +14,8 @@
 //   observacoes: 'Alguns lotes exigem segurar o botão até todos LEDs piscarem.',
 //   referencias: [ { rotulo:'Manual oficial (página 12)', url:'#' } ]
 // }
+console.log('[build] JS carregado de', document.currentScript && document.currentScript.src);
+
 document.addEventListener('DOMContentLoaded', () => {
   const $q = s => document.querySelector(s);
 
@@ -333,31 +335,6 @@ const data = [
   },
 
   {
-  id:'intelbras-nvd-1208',
-  fabricante:'Independente',
-  modelo:'Intelbras NVD 1208',
-  categoria:'CFTV (câmeras/DVR/NVR)',
-  conectividade:['cabo'],
-  reset:['interface','padrao'],
-  resumo:'NVR para câmeras IP (até 8 canais) com gerenciamento e gravação em rede.',
-  passos:[
-    { t:'Restaurar padrões pela interface', steps:[
-      'Conecte monitor e mouse ao NVR.',
-      'Acesse Sistema → Manutenção/Restaurar padrões.',
-      'Selecione os itens a restaurar (ou “Todos”) e confirme.',
-      'Aguarde o reinício para aplicar os padrões de fábrica.'
-    ]},
-    { t:'Rede (DHCP ou IP fixo)', steps:[
-      'Em Rede, deixe DHCP habilitado para IP automático OU defina IP estático conforme sua LAN.',
-      'Aplicar alterações e reiniciar se solicitado.'
-    ]}
-  ],
-  infos:[ ['IP padrão','DHCP (automático)'], ['Usuário padrão','admin'], ['Senha padrão','admin (trocar no 1º acesso)'] ],
-  observacoes:'Para adicionar câmeras: Disp. remoto → Procurar → Adicionar (ajuste credenciais/streams).',
-  referencias:[ { rotulo:'Manual oficial NVD 1204/1208/1216', url:'https://backend.intelbras.com/sites/default/files/2020-06/Manual-do-usuario-NVD-1204-NVD-1208-NVD-1216-02.20.pdf' } ]
-},
-
-{
   id:'intelbras-mhdx-1016-c',
   fabricante:'Independente',
   modelo:'Intelbras MHDX 1016-C',
