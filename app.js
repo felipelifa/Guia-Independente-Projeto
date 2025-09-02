@@ -14,6 +14,154 @@
 //   observacoes: 'Alguns lotes exigem segurar o botão até todos LEDs piscarem.',
 //   referencias: [ { rotulo:'Manual oficial (página 12)', url:'#' } ]
 // }
+document.addEventListener('DOMContentLoaded', () => {
+  const $q = s => document.querySelector(s);
+
+  const results   = $q('#results');
+  const search    = $q('#search');
+  const category  = $q('#category');
+  const chipReset = $q('#chip-reset');
+  const chipCon   = $q('#chip-con');
+  const drawer    = $q('#drawer');
+  const dTitle    = $q('#d-title');
+  const dMeta     = $q('#d-meta');
+  const dBody     = $q('#d-body');
+
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  let state = { q:'', cat:'', reset:'', con:'' };
+
+  function applyFilters(){
+    const q = state.q.trim().toLowerCase();
+    const out = data.filter(it=>{
+      const matchesQ = !q || [it.modelo,it.categoria,(it.resumo||'')].join(' ').toLowerCase().includes(q);
+      const matchesCat = !state.cat || it.categoria===state.cat;
+      const matchesReset = !state.reset || (it.reset||[]).includes(state.reset);
+      const matchesCon = !state.con || (it.conectividade||[]).includes(state.con);
+      return matchesQ && matchesCat && matchesReset && matchesCon;
+    });
+    renderCards(out);
+  }
+
+  function renderCards(list){
+    if (!results) return;
+    results.innerHTML = '';
+    if(!list.length){
+      results.innerHTML = `<div class="notice">Nenhum resultado. Ajuste os filtros ou refine sua busca.</div>`;
+      return;
+    }
+    list.forEach(it=>{
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="badge">${it.categoria}</div>
+        <div class="title">${it.modelo}</div>
+        <div class="specs">${it.resumo||''}</div>
+        <div class="specs">Conectividade: ${(it.conectividade||[]).join(', ')||'—'}</div>
+        <button class="btn" aria-label="Abrir detalhes de ${it.modelo}">Ver detalhes</button>
+      `;
+      card.querySelector('.btn').addEventListener('click', ()=>openDrawer(it));
+      results.appendChild(card);
+    });
+  }
+
+  function openDrawer(it){
+    if (!drawer) return alert('Sem componente de detalhes no HTML (#drawer).');
+
+    if (dTitle) dTitle.textContent = `${it.modelo}`;
+    if (dMeta) {
+      dMeta.innerHTML = '';
+      (it.infos||[]).forEach(([k,v])=>{
+        const tag = document.createElement('span');
+        tag.className='badge';
+        tag.textContent = `${k}: ${v}`;
+        dMeta.appendChild(tag);
+      });
+    }
+
+    const body = document.createElement('div');
+    (it.passos||[]).forEach((grp)=>{
+      const section = document.createElement('div');
+      const title = document.createElement('h3');
+      title.textContent = grp.t;
+      section.appendChild(title);
+      grp.steps.forEach((s,idx)=>{
+        const row = document.createElement('div');
+        row.className = 'step';
+        row.innerHTML = `<div class="n">${idx+1}</div><div>${s}</div>`;
+        section.appendChild(row);
+      });
+      body.appendChild(section);
+    });
+
+    if(it.observacoes){
+      const warn = document.createElement('div');
+      warn.className='step warn';
+      warn.innerHTML = `<div class="n">!</div><div><b>Observações:</b> ${it.observacoes}</div>`;
+      body.appendChild(warn);
+    }
+
+    if((it.referencias||[]).length){
+      const refs = document.createElement('div');
+      refs.innerHTML = '<h3>Referências</h3>';
+      it.referencias.forEach(r=>{
+        const a = document.createElement('a');
+        a.href = r.url; a.target = '_blank'; a.rel='noopener';
+        a.textContent = r.rotulo;
+        refs.appendChild(a);
+        refs.appendChild(document.createElement('br'));
+      });
+      body.appendChild(refs);
+    }
+
+    if (dBody) {
+      dBody.innerHTML = '';
+      dBody.appendChild(body);
+    }
+
+    // <dialog> seguro (fallback se o navegador não suportar showModal)
+    if (typeof drawer.showModal === 'function') {
+      try { drawer.showModal(); } catch { drawer.setAttribute('open', ''); }
+    } else {
+      drawer.setAttribute('open','');
+    }
+  }
+
+  const btnClose = document.getElementById('close');
+  if (btnClose && drawer) {
+    btnClose.addEventListener('click', ()=> {
+      if (typeof drawer.close === 'function') drawer.close();
+      else drawer.removeAttribute('open');
+    });
+  }
+  if (drawer) {
+    drawer.addEventListener('click', e=>{ if(e.target===drawer) {
+      if (typeof drawer.close === 'function') drawer.close();
+      else drawer.removeAttribute('open');
+    }});
+  }
+
+  if (search)  search.addEventListener('input', e=>{ state.q = e.target.value; applyFilters(); });
+  if (category) category.addEventListener('change', e=>{ state.cat = e.target.value; applyFilters(); });
+
+  function wireChips(container, key){
+    if (!container) return;
+    container.addEventListener('click', e=>{
+      const btn = e.target.closest('.chip');
+      if(!btn) return;
+      [...container.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
+      btn.classList.add('active');
+      state[key] = btn.dataset[key] || '';
+      applyFilters();
+    });
+    const first = container.querySelector('.chip');
+    if(first){ first.classList.add('active'); }
+  }
+  wireChips(chipReset,'reset');
+  wireChips(chipCon,'con');
+
+
 
 const data = [
   {
@@ -968,127 +1116,6 @@ const data = [
 
 ];
 
-
-
-// ======= Helpers & Render =======
-const $q = s => document.querySelector(s);
-const results = $q('#results');
-const search = $q('#search');
-const category = $q('#category');
-const chipReset = $q('#chip-reset');
-const chipCon = $q('#chip-con');
-const drawer = $q('#drawer');
-const dTitle = $q('#d-title');
-const dMeta = $q('#d-meta');
-const dBody = $q('#d-body');
-document.getElementById('year').textContent = new Date().getFullYear();
-
-let state = { q:'', cat:'', reset:'', con:'' };
-
-function applyFilters(){
-  const q = state.q.trim().toLowerCase();
-  const out = data.filter(it=>{
-    const matchesQ = !q || [it.modelo,it.categoria,(it.resumo||'')].join(' ').toLowerCase().includes(q);
-    const matchesCat = !state.cat || it.categoria===state.cat;
-    const matchesReset = !state.reset || (it.reset||[]).includes(state.reset);
-    const matchesCon = !state.con || (it.conectividade||[]).includes(state.con);
-    return matchesQ && matchesCat && matchesReset && matchesCon;
-  });
-  renderCards(out);
-}
-
-function renderCards(list){
-  results.innerHTML = '';
-  if(!list.length){
-    results.innerHTML = `<div class="notice">Nenhum resultado. Ajuste os filtros ou refine sua busca.</div>`;
-    return;
-  }
-  list.forEach(it=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="badge">${it.categoria}</div>
-      <div class="title">${it.modelo}</div>
-      <div class="specs">${it.resumo||''}</div>
-      <div class="specs">Conectividade: ${(it.conectividade||[]).join(', ')||'—'}</div>
-      <button class="btn" aria-label="Abrir detalhes de ${it.modelo}">Ver detalhes</button>
-    `;
-    card.querySelector('.btn').addEventListener('click', ()=>openDrawer(it));
-    results.appendChild(card);
-  });
-}
-
-function openDrawer(it){
-  dTitle.textContent = `${it.modelo}`;
-  dMeta.innerHTML = '';
-  (it.infos||[]).forEach(([k,v])=>{
-    const tag = document.createElement('span');
-    tag.className='badge';
-    tag.textContent = `${k}: ${v}`;
-    dMeta.appendChild(tag);
-  });
-  const body = document.createElement('div');
-
-  (it.passos||[]).forEach((grp)=>{
-    const section = document.createElement('div');
-    const title = document.createElement('h3');
-    title.textContent = grp.t;
-    section.appendChild(title);
-    grp.steps.forEach((s,idx)=>{
-      const row = document.createElement('div');
-      row.className = 'step';
-      row.innerHTML = `<div class="n">${idx+1}</div><div>${s}</div>`;
-      section.appendChild(row);
-    });
-    body.appendChild(section);
-  });
-
-  if(it.observacoes){
-    const warn = document.createElement('div');
-    warn.className='step warn';
-    warn.innerHTML = `<div class="n">!</div><div><b>Observações:</b> ${it.observacoes}</div>`;
-    body.appendChild(warn);
-  }
-
-  if((it.referencias||[]).length){
-    const refs = document.createElement('div');
-    refs.innerHTML = '<h3>Referências</h3>';
-    it.referencias.forEach(r=>{
-      const a = document.createElement('a');
-      a.href = r.url; a.target = '_blank'; a.rel='noopener'; a.textContent = r.rotulo;
-      refs.appendChild(a);
-      refs.appendChild(document.createElement('br'));
-    });
-    body.appendChild(refs);
-  }
-
-  dBody.innerHTML = '';
-  dBody.appendChild(body);
-  drawer.showModal();
-}
-
-document.getElementById('close').addEventListener('click', ()=>drawer.close());
-drawer.addEventListener('click', e=>{ if(e.target===drawer) drawer.close(); });
-
-// Eventos de filtro
-search.addEventListener('input', e=>{ state.q = e.target.value; applyFilters(); });
-category.addEventListener('change', e=>{ state.cat = e.target.value; applyFilters(); });
-
-function wireChips(container, key){
-  container.addEventListener('click', e=>{
-    const btn = e.target.closest('.chip');
-    if(!btn) return;
-    [...container.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
-    btn.classList.add('active');
-    state[key] = btn.dataset[key] || '';
-    applyFilters();
-  });
-  // Ativa o primeiro (Todos)
-  const first = container.querySelector('.chip');
-  if(first){ first.classList.add('active'); }
-}
-wireChips(chipReset,'reset');
-wireChips(chipCon,'con');
-
 // Inicial
 renderCards(data);
+});
