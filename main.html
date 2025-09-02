@@ -81,7 +81,9 @@
     </div>
   </dialog>
 
-  <script src="app.js" defer></script>
+<script src="./app.js?v=2" defer
+  onload="console.log('✅ app.js carregado:', this.src)"
+  onerror="console.error('❌ app.js FALHOU:', this.src)"></script>
 
 </body>
 </html>

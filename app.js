@@ -14,7 +14,6 @@
 //   observacoes: 'Alguns lotes exigem segurar o botão até todos LEDs piscarem.',
 //   referencias: [ { rotulo:'Manual oficial (página 12)', url:'#' } ]
 // }
-console.log('[build] JS carregado de', document.currentScript && document.currentScript.src);
 
 document.addEventListener('DOMContentLoaded', () => {
   const $q = s => document.querySelector(s);
