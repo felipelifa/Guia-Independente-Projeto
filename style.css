@@ -1,0 +1,112 @@
+:root{
+  --bg:#0b1711;           /* fundo principal (verde escuro) */
+  --panel:#0f1f16;        /* painéis/cards */
+  --soft:#142a1f;         /* elementos suaves/bordas */
+  --accent:#34d399;       /* verde destaque (links/botões) */
+  --muted:#a7c3b1;        /* texto secundário */
+  --text:#ecfdf5;         /* texto principal (alto contraste) */
+  --danger:#ff7a7a;       /* avisos/erros */
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+  background:linear-gradient(180deg,#00f386,#0c1a13 40%,#0b1711 100%);
+  color:var(--text)
+}
+header{
+  position:sticky;top:0;z-index:5;
+  background:rgba(0, 0, 0, 0.85);
+  backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid #1a2e24
+}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{
+  width:38px;height:38px;border-radius:10px;
+  background:conic-gradient(from 120deg at 50% 50%, #34d399, #22c55e, #16a34a, #86efac, #34d399);
+  box-shadow:0 0 0 2px #13231b
+}
+h1{font-size:1.2rem;margin:0}
+.tag{font-size:.75rem;color:var(--muted)}
+
+.topbar{display:grid;grid-template-columns:1fr 200px;gap:12px;margin-top:14px}
+input[type="search"], select{
+  width:100%;padding:12px 14px;border-radius:12px;
+  border:1px solid #1c3026;background:#0d1a14;color:var(--text)
+}
+input[type="search"]::placeholder{color:#7aa08e}
+
+main{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-top:18px}
+@media (max-width:920px){main{grid-template-columns:1fr}}
+
+aside{
+  background:var(--panel);border:1px solid #1a2e24;border-radius:var(--radius);padding:16px
+}
+aside h3{margin:0 0 12px 0;font-size:.95rem}
+.filter{display:flex;flex-direction:column;gap:10px}
+.filter label{font-size:.8rem;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  padding:6px 10px;border:1px solid #254333;border-radius:999px;
+  background:#11281c;font-size:.8rem;color:#cfe9db;cursor:pointer
+}
+.chip.active{background:#123b29;border-color:#2e6b4b;box-shadow:inset 0 0 0 1px #2e6b4b}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:920px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+
+.card{
+  background:var(--panel);border:1px solid #1a2e24;border-radius:var(--radius);
+  padding:14px;display:flex;flex-direction:column;gap:10px
+}
+.badge{
+  font-size:.72rem;color:#c7e8d8;border:1px solid #244635;background:#0f281c;
+  padding:4px 8px;border-radius:999px;width:max-content
+}
+.title{font-weight:600}
+.specs{font-size:.85rem;color:#c3ddcf}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid #254333;background:#0f241a;color:#eaf7ef;
+  padding:10px 12px;border-radius:12px;cursor:pointer
+}
+.btn:hover{border-color:#2e6b4b}
+
+.notice{
+  margin:18px 0 0;background:#0e1f17;border:1px dashed #274738;
+  padding:12px;border-radius:12px;color:#c3ddcf;font-size:.85rem
+}
+.notice b{color:#e8f7ef}
+
+footer{margin:24px 0 40px;color:#b7d3c2;font-size:.85rem}
+a{color:var(--accent);text-decoration:none}
+
+/* Drawer */
+dialog{border:none;padding:0;background:transparent}
+.drawer{
+  width:min(780px,96vw);max-height:90vh;overflow:auto;
+  background:#95b8a5;border:1px solid #203629;border-radius:18px;padding:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5)
+}
+.drawer header{position:sticky;top:0;background:#95b8a5;padding:6px 0 10px 0;border:0}
+.drawer h2{margin:6px 0 0;font-size:1.1rem}
+.drawer .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.step{
+  display:flex;gap:10px;margin:10px 0;padding:10px;
+  background:#0bb867;border:1px solid #1f3b2c;border-radius:12px
+}
+.step .n{
+  width:24px;height:24px;display:grid;place-items:center;border-radius:7px;
+  background:#194931;color:#d2f5df;font-weight:700
+}
+/* aviso/alerta mantém tom quente para contraste semântico */
+.warn{background:#9fc0b1;border-color:#5a2a2a}
+.warn .n{background:#5a1e1e}
+
+.kbd{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:#18be6b31;border:1px solid #224233;padding:2px 6px;border-radius:6px
+}

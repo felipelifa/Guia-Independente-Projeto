@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guia Independente de Equipamentos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Guia Independente de Equipamentos</h1>
+          <div class="tag">Tutoriais originais, inspirados em manuais oficiais. Não oficial.</div>
+        </div>
+      </div>
+      <div class="topbar" role="search">
+        <input id="search" type="search" placeholder="Buscar por modelo, categoria ou termo (ex.: reset, WPS, PoE)" aria-label="Buscar" />
+        <select id="category" aria-label="Filtrar por categoria">
+          <option value="">Todas as categorias</option>
+          <option>Roteadores</option>
+          <option>CFTV (câmeras/DVR/NVR)</option>
+          <option>Interfonia</option>
+          <option>Controle de Acesso</option>
+          <option>Telefonia/VoIP</option>
+          <option>Rede (switch/PoE)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <main>
+      <aside>
+        <h3>Filtros rápidos</h3>
+        <div class="filter">
+          <label>Tipo de reset</label>
+          <div class="chips" id="chip-reset">
+            <button class="chip" data-reset="">Todos</button>
+            <button class="chip" data-reset="botao">Botão físico</button>
+            <button class="chip" data-reset="interface">Via interface</button>
+            <button class="chip" data-reset="padrao">Restaurar padrões</button>
+          </div>
+          <label>Conectividade</label>
+          <div class="chips" id="chip-con">
+            <button class="chip" data-con="">Todas</button>
+            <button class="chip" data-con="wifi">Wi‑Fi</button>
+            <button class="chip" data-con="cabo">Cabo</button>
+            <button class="chip" data-con="poe">PoE</button>
+          </div>
+        </div>
+        <div class="notice" role="note">
+          <b>Disclaimer:</b> este site é independente e não oficial. Procedimentos reescritos em linguagem própria. Para detalhes, consulte também o manual oficial do fabricante.
+        </div>
+      </aside>
+
+      <section>
+        <div id="results" class="grid" aria-live="polite"></div>
+        <div class="notice">
+          Dica: abra um item e use <span class="kbd">Ctrl</span> + <span class="kbd">F</span> para localizar termos como <i>IP padrão</i>, <i>WPS</i> ou <i>Onvif</i>.
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      © <span id="year"></span> Guia Independente. Marcas e modelos pertencem aos seus respectivos proprietários.
+      <a href="#" id="policy">Política editorial</a> · <a href="#" id="rights">Direitos autorais</a>
+    </footer>
+  </div>
+
+  <dialog id="drawer" aria-label="Detalhes do equipamento">
+    <div class="drawer">
+      <header>
+        <button class="btn" id="close" aria-label="Fechar detalhes">← Voltar</button>
+        <h2 id="d-title"></h2>
+        <div class="meta" id="d-meta"></div>
+      </header>
+      <div id="d-body"></div>
+    </div>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
