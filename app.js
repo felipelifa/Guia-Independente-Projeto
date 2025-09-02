@@ -1,21 +1,17 @@
-// ======= Catálogo (exemplo) =======
-// Estrutura padrão de um item:
-// {
-//   id: 'rx300',
-//   fabricante: 'Fabricante X',
-//   modelo: 'RX 300',
-//   categoria: 'Roteadores',
-//   conectividade: ['wifi','cabo'],
-//   reset: ['botao','interface','padrao'],
-//   resumo: 'Roteador dual-band AC1200 com WPS e QoS.',
-//   passos: [ { t:'Reset físico (botão)', steps:[ 'Com o aparelho ligado, pressione o botão RESET por 10–12s até o LED piscar.', 'Aguarde o reboot (2–3 min).', 'Após reiniciar, acesse a interface pelo IP padrão.' ] },
-//            { t:'Reset via interface', steps:[ 'Acesse o painel (ex.: http://192.168.0.1).', 'Entre em Administração > Backup/Reset.', 'Clique em “Restaurar padrões”.' ] }, ],
-//   infos: [ ['IP padrão','192.168.0.1'], ['Usuário padrão','admin'], ['Senha padrão','admin'] ],
-//   observacoes: 'Alguns lotes exigem segurar o botão até todos LEDs piscarem.',
-//   referencias: [ { rotulo:'Manual oficial (página 12)', url:'#' } ]
-// }
+'use strict';
 
-document.addEventListener('DOMContentLoaded', () => {
+// Boot seguro: roda já se o DOM estiver pronto, ou aguarda DOMContentLoaded.
+(function bootstrap(){
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+function init(){
+  console.log('[boot] init');
+
   const $q = s => document.querySelector(s);
 
   const results   = $q('#results');
@@ -46,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderCards(list){
-    if (!results) return;
+    if (!results) {
+      console.warn('[render] #results não encontrado');
+      return;
+    }
     results.innerHTML = '';
     if(!list.length){
       results.innerHTML = `<div class="notice">Nenhum resultado. Ajuste os filtros ou refine sua busca.</div>`;
@@ -68,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openDrawer(it){
+    console.log('[drawer] abrir', it?.id || it?.modelo);
     if (!drawer) return alert('Sem componente de detalhes no HTML (#drawer).');
 
     if (dTitle) dTitle.textContent = `${it.modelo}`;
@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dBody.appendChild(body);
     }
 
-    // <dialog> seguro (fallback se o navegador não suportar showModal)
     if (typeof drawer.showModal === 'function') {
       try { drawer.showModal(); } catch { drawer.setAttribute('open', ''); }
     } else {
@@ -1091,7 +1090,8 @@ const data = [
 },
 
 ];
-
-// Inicial
-renderCards(data);
-});
+console.log('[init] itens no catálogo:', data.length);
+  renderCards(data);
+  // Exponha helpers p/ debug no console, se quiser:
+  window.guia = { state, applyFilters, openDrawer };
+}
